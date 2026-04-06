@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Checkout | AquaShop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins', sans-serif;
+}
+body{
+    background:#f4fbff;
+}
+.container{
+    max-width:1100px;
+    margin:auto;
+    padding:40px 20px;
+}
+h1{
+    text-align:center;
+    margin-bottom:30px;
+    color:#003c5f;
+}
+.checkout-wrapper{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:30px;
+}
+.card{
+    background:#fff;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+.card h2{
+    margin-bottom:20px;
+    color:#003c5f;
+}
+input, textarea, select{
+    width:100%;
+    padding:12px;
+    margin-bottom:15px;
+    border:1px solid #ccc;
+    border-radius:6px;
+}
+textarea{
+    resize:none;
+    height:80px;
+}
+.order-item{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:10px;
+}
+.total{
+    font-size:20px;
+    font-weight:600;
+    margin-top:20px;
+}
+.place-btn{
+    width:100%;
+    padding:14px;
+    background:#00bcd4;
+    border:none;
+    color:#fff;
+    font-size:16px;
+    border-radius:6px;
+    cursor:pointer;
+}
+.place-btn:hover{
+    background:#0097a7;
+}
+@media(max-width:768px){
+    .checkout-wrapper{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>💳 Checkout</h1>
+  <form id="cartForm">
+    <div class="checkout-wrapper">
+
+        <!-- CUSTOMER DETAILS -->
+        <div class="card">
+            <h2>Customer Details</h2>
+            <input type="text" id="name" name="name" placeholder="Full Name">
+            <input type="text" id="phone" name="phone" placeholder="Mobile Number">
+            <textarea id="address" name="address" placeholder="Delivery Address"></textarea>
+
+            <select id="payment" name="payment">
+                <option value="">Select Payment Method</option>
+                <option>Cash On Delivery</option>
+                <option>UPI</option>
+            </select>
+        </div>
+
+        <!-- ORDER SUMMARY -->
+        <div class="card">
+            <h2>Order Summary</h2>
+            <div id="orderItems"></div>
+            <div class="total" >Grand Total: Rs. <span id="orderTotal">0</span></div>
+			<button type="submit" class="place-btn">Place Order</button>
+
+        </div>
+
+    </div>
+    </form>
+</div>
+
+<script>
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+function loadOrder(){
+    let html = "";
+    let total = 0;
+
+    if(cart.length === 0){
+        $("#orderItems").html("<p>Your cart is empty</p>");
+        return;
+    }
+
+    cart.forEach(item=>{
+        let price = item.price * item.qty;
+        total += price;
+
+        html += `
+            <div class="order-item">
+                <span>${item.name} (x${item.qty})</span>
+                <span>Rs. ${price}</span>
+            </div>
+        `;
+    });
+
+    $("#orderItems").html(html);
+    $("#orderTotal").text(total);
+}
+
+loadOrder();
+
+
+$(document).ready(function(){
+	$("#cartForm").submit(function(event){
+            //alert('test');
+		event.preventDefault();
+		ajaxPost();
+	}); 
+	
+	function ajaxPost()
+	{
+		var formData = {
+				 name : $("input[name='name']").val(),
+				 phone : $("input[name='phone']").val(),
+				 address: $("textarea[name='address']").val(),   
+				 payment: $("select[name='payment']").val(),  
+				
+				}
+			console.log(formData);
+		
+		//Do Post
+		$.ajax({
+			type : "post",
+			contentType:"application/json",
+			url:"http://localhost:8080/saveproduct" ,
+			data:JSON.stringify(formData) , 
+			datatype:"application/text",
+			success:function(data)
+			{
+				if(data=="success")
+					{
+					alert("!!! Added Product  Successfully !!!!");
+					//console.log("redired to login page");
+                                         location.assign("http://localhost:8080/aquahome.html");
+					}
+                                    console.log(data);
+			},
+		});
+		//ajaxPost();
+	}
+ });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Registration Form</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins', sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background:
+      linear-gradient(135deg, rgba(0,70,120,0.85), rgba(0,200,220,0.85)),
+      url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e");
+    background-size:cover;
+    background-position:center;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+
+/* CARD */
+.form-card{
+	backdrop-filter: blur(8px);
+    width:360px;
+    
+    padding:35px 30px;
+    border-radius:12px;
+    box-shadow:0 20px 40px rgba(0,0,0,0.15);
+    position:relative;
+}
+
+/* CLOSE ICON */
+.form-card .close{
+    position:absolute;
+    top:15px;
+    right:15px;
+    font-size:22px;
+    cursor:pointer;
+    color:#00c6ff;
+}
+
+/* TITLE */
+.form-card h2{
+    text-align:center;
+    color:#00bcd4;
+    margin-bottom:25px;
+    font-weight:600;
+    letter-spacing:1px;
+}
+
+/* INPUT GROUP */
+.form-group{
+    margin-bottom:18px;
+}
+
+.form-group input{
+    width:100%;
+    border:none;
+    border-bottom:2px solid #ddd;
+    padding:10px 5px;
+    font-size:14px;
+    outline:none;
+	background: transparent;
+}
+
+.form-group input:focus{
+    border-color:#00c6ff;
+}
+
+/* PASSWORD EYE */
+.password-box{
+    position:relative;
+}
+::placeholder {
+    color: black;
+    opacity: 1;   /* important for Firefox */
+}
+
+.password-box span{
+    position:absolute;
+    right:5px;
+    top:10px;
+    cursor:pointer;
+    color:#00bcd4;
+}
+
+/* CHECKBOX */
+.terms{
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+    font-size:12px;
+    color:#777;
+    margin-bottom:20px;
+}
+
+/* BUTTON */
+.btn{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:6px;
+    background: linear-gradient(to right, #00c6ff, #00f2c3);
+    color:#fff;
+    font-size:14px;
+    cursor:pointer;
+    letter-spacing:1px;
+    transition:0.3s;
+}
+
+.btn:hover{
+    opacity:0.9;
+}
+
+/* FOOTER */
+.footer-text{
+    text-align:center;
+    margin-top:15px;
+    font-size:13px;
+}
+
+.footer-text a{
+    color:#00bcd4;
+    text-decoration:none;
+    font-weight:500;
+}
+</style>
+</head>
+
+<body>
+
+<div class="form-card">
+    
+
+    <h2>Registration Form</h2>
+
+    <form name="my-form" id="RegForm"  action="" method="">
+        <div class="form-group">
+            <input type="text" name="name" placeholder="Name">
+        </div>
+
+        <div class="form-group">
+            <input type="email" name="email" placeholder="Email address">
+        </div>
+
+        <div class="form-group">
+            <input type="text" name="country" placeholder="Country">
+        </div>
+
+        <div class="form-group">
+            <input type="text" name="phone" placeholder="Phone">
+        </div>
+
+      <div class="form-group password-box">
+    <input type="password" id="password" name="password" placeholder="Password">
+     <span id="togglePassword" style="cursor:pointer;">🙊</span>
+</div>
+
+
+
+        <button class="btn">CREATE ACCOUNT</button>
+
+        <div class="footer-text">
+            Already have an account? <a href="index.html">Sign in</a>
+        </div>
+    </form>
+</div>
+<script>
+const togglePassword = document.getElementById("togglePassword");
+const passwordField = document.getElementById("password");
+
+togglePassword.addEventListener("click", function () {
+    if (passwordField.type === "password") {
+        passwordField.type = "text";
+        togglePassword.textContent = "🙈";
+    } else {
+        passwordField.type = "password";
+        togglePassword.textContent = "🙊";
+    }
+});
+</script>
+<script>
+$(document).ready(function(){
+	$("#RegForm").submit(function(event){
+            //alert('test');
+		event.preventDefault();
+		ajaxPost();
+	}); 
+	
+	function ajaxPost()
+	{
+		var formData = {
+				 name : $("input[name='name']").val(),
+				 email : $("input[name='email']").val(),
+				 country : $("input[name='country']").val(),
+				 phone : $("input[name='phone']").val(),
+				password : $("input[name='password']").val(),
+				}
+			console.log(formData);
+		
+		//Do Post
+		$.ajax({
+			type : "post",
+			contentType:"application/json",
+			url:"http://localhost:8080/savecustomer" ,
+			data:JSON.stringify(formData) , 
+			datatype:"application/text",
+			success:function(data)
+			{
+				if(data=="success")
+					{
+					alert("!!! Registered  Successfully !!!!");
+					//console.log("redired to login page");
+                                         location.assign("http://localhost:8080/index.html");
+					}
+                                    console.log(data);
+			},
+		});
+		//ajaxPost();
+	}
+ });
+ 
+</script>
+      
+</body>
+</html>
