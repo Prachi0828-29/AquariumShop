@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Your Cart | AquaShop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins', sans-serif;
+}
+
+body{
+    background:#f4fbff;
+}
+
+/* PAGE */
+.container{
+    max-width:1000px;
+    margin:auto;
+    padding:40px 20px;
+}
+
+h1{
+    text-align:center;
+    margin-bottom:30px;
+    color:#003c5f;
+}
+
+/* CART TABLE */
+.cart-table{
+    width:100%;
+    background:#fff;
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+.cart-table th, .cart-table td{
+    padding:15px;
+    text-align:center;
+}
+
+.cart-table th{
+    background:#00bcd4;
+    color:#fff;
+}
+
+.cart-table img{
+    width:80px;
+    border-radius:8px;
+}
+
+/* QTY */
+.qty-btn{
+    padding:6px 12px;
+    border:none;
+    background:#00bcd4;
+    color:#fff;
+    cursor:pointer;
+    border-radius:4px;
+}
+
+.qty{
+    margin:0 10px;
+}
+
+/* REMOVE */
+.remove{
+    color:red;
+    cursor:pointer;
+    font-weight:600;
+}
+
+/* TOTAL */
+.cart-total{
+    margin-top:30px;
+    text-align:right;
+    font-size:22px;
+    font-weight:600;
+}
+
+/* EMPTY */
+.empty{
+    text-align:center;
+    padding:40px;
+    font-size:18px;
+    color:#777;
+}
+.checkout-btn{
+    background:#003c5f;
+    color:#fff;
+    border:none;
+    padding:14px 30px;
+    border-radius:6px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+.checkout-btn:hover{
+    background:#005f87;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>🛒 Your Cart</h1>
+
+    <table class="cart-table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Qty</th>
+                <th>Total</th>
+                <th>Remove</th>
+            </tr>
+        </thead>
+        <tbody id="cart-body">
+            <!-- JS se data aayega -->
+        </tbody>
+    </table>
+
+  <div class="cart-total">
+    Grand Total: Rs. <span id="grandTotal">0</span>
+</div>
+
+<div style="text-align:right; margin-top:20px;">
+    <button id="checkoutBtn" class="checkout-btn">Proceed to Checkout</button>
+</div>
+
+<script>
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+function renderCart(){
+    let html = "";
+    let grandTotal = 0;
+
+    if(cart.length === 0){
+        $("#cart-body").html(`<tr><td colspan="6" class="empty">Your cart is empty 😔</td></tr>`);
+        $("#grandTotal").text(0);
+        return;
+    }
+
+    cart.forEach((item,index)=>{
+        let total = item.price * item.qty;
+        grandTotal += total;
+
+        html += `
+        <tr>
+            <td><img src="${item.img}"></td>
+            <td>${item.name}</td>
+            <td>Rs. ${item.price}</td>
+            <td>
+                <button class="qty-btn minus" data-index="${index}">-</button>
+                <span class="qty">${item.qty}</span>
+                <button class="qty-btn plus" data-index="${index}">+</button>
+            </td>
+            <td>Rs. ${total}</td>
+            <td class="remove" data-index="${index}">✖</td>
+        </tr>
+        `;
+    });
+
+    $("#cart-body").html(html);
+    $("#grandTotal").text(grandTotal);
+}
+
+/* Quantity + */
+$(document).on("click",".plus",function(){
+    let i = $(this).data("index");
+    cart[i].qty++;
+    localStorage.setItem("cart",JSON.stringify(cart));
+    renderCart();
+});
+
+/* Quantity - */
+$(document).on("click",".minus",function(){
+    let i = $(this).data("index");
+    if(cart[i].qty > 1){
+        cart[i].qty--;
+        localStorage.setItem("cart",JSON.stringify(cart));
+        renderCart();
+    }
+});
+
+/* Remove */
+$(document).on("click",".remove",function(){
+    let i = $(this).data("index");
+    cart.splice(i,1);
+    localStorage.setItem("cart",JSON.stringify(cart));
+    renderCart();
+});
+
+/* Load */
+renderCart();
+$("#checkoutBtn").click(function(){
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    if(cart.length === 0){
+        alert("Your cart is empty!");
+        return;
+    }
+
+    window.location.href = "checkout.html";
+});
+
+</script>
+
+</body>
+</html>
